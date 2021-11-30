@@ -1,4 +1,4 @@
-module caitun.com/webdav-sync
+module github.com/caitunai/webdav-sync
 
 go 1.17
 
