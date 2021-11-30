@@ -11,6 +11,11 @@ Webdav sync
 > You should have a configuration file `webdav.json` in the directory where you run `webdav-sync`.
 
 **webdav.json**
+```shell
+> cd /Users/user/Documents/path/to/upload
+> vim webdav.json
+```
+
 ```json
 {
   "local_path": "/Users/user/Documents/path/to/upload",
@@ -28,5 +33,6 @@ Webdav sync
 ## Run
 > Run webdav-sync command in the terminal at the path of webdav.json
 ```shell
+> cd /Users/user/Documents/path/to/upload
 > webdav-sync
 ```
