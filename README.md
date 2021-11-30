@@ -4,7 +4,7 @@ Webdav sync
 
 ## Install
 ```shell
-> go install github.com/caitunai/webdav-sync
+> go install github.com/caitunai/webdav-sync@v1.1.1
 ```
 
 ## Configuration
