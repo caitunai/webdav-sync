@@ -7,6 +7,7 @@ import (
 	"github.com/gen2brain/beeep"
 	"github.com/spf13/viper"
 	"github.com/studio-b12/gowebdav"
+	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -139,7 +140,9 @@ func processEvent(event fsnotify.Event, webdavFilePath string) {
 	}
 	if err != nil {
 		notify("Webdav Error", err.Error(), true)
+		log.Printf("%s %s %s \n", webdavFilePath, "webdav error:", err.Error())
 	} else {
+		log.Printf("%s %s \n", webdavFilePath, strings.ToLower(title))
 		notify(title, webdavFilePath, false)
 	}
 }
