@@ -110,6 +110,9 @@ func watchDir(path string, fi os.FileInfo, err error) error {
 }
 
 func processEvent(event fsnotify.Event, webdavFilePath string) {
+	if strings.HasSuffix(event.Name, "~") {
+		return
+	}
 	if event.Op == fsnotify.Chmod {
 		return
 	}
