@@ -76,7 +76,7 @@ func main() {
 			case event := <-watcher.Events:
 				webdavFilePath := serverPath + "/" + strings.ReplaceAll(event.Name, root, "")
 				webdavFilePath = strings.ReplaceAll(webdavFilePath, "//", "/")
-				processEvent(event, webdavFilePath)
+				processEvent(event, webdavFilePath, root)
 				// watch for errors
 			case err = <-watcher.Errors:
 				fmt.Printf("Watcher error %s \n", err)
@@ -109,7 +109,11 @@ func watchDir(path string, fi os.FileInfo, err error) error {
 	return nil
 }
 
-func processEvent(event fsnotify.Event, webdavFilePath string) {
+func processEvent(event fsnotify.Event, webdavFilePath, root string) {
+	if (event.Name + "/") == root {
+		log.Printf("root change ignored, event: %s, root: %s", event.Name, root)
+		return
+	}
 	if strings.HasSuffix(event.Name, "~") {
 		return
 	}
@@ -118,13 +122,13 @@ func processEvent(event fsnotify.Event, webdavFilePath string) {
 	}
 	var err error
 	var title string
-	if event.Op == fsnotify.Write {
+	if event.Op&fsnotify.Write == fsnotify.Write {
 		file, _ := os.Open(event.Name)
 		err = dav.WriteStream(webdavFilePath, file, 0644)
 		_ = file.Close()
 		title = "Upload success"
 	}
-	if event.Op == fsnotify.Create {
+	if event.Op&fsnotify.Create == fsnotify.Create {
 		isDirectory := isDir(event.Name)
 		_ = watcher.Add(event.Name)
 		if isDirectory {
@@ -143,9 +147,9 @@ func processEvent(event fsnotify.Event, webdavFilePath string) {
 	}
 	if err != nil {
 		notify("Webdav Error", err.Error(), true)
-		log.Printf("%s %s %s \n", webdavFilePath, "webdav error:", err.Error())
+		log.Printf("%s %s %s %s \n", event.Op.String(), webdavFilePath, "webdav error:", err.Error())
 	} else {
-		log.Printf("%s %s \n", webdavFilePath, strings.ToLower(title))
+		log.Printf("%s %s %s \n", event.Op.String(), webdavFilePath, strings.ToLower(title))
 		notify(title, webdavFilePath, false)
 	}
 }
